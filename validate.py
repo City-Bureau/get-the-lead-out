@@ -14,7 +14,7 @@ def clean(row, patterns):
 
 def school_source(group):
     pdf = group.replace('.csv', '')
-    school = re.findall(r'Individual.chool_(.*?)_\d\d\d\d', pdf)[0].title()
+    school = re.findall(r'Individual.chools*_(.*?)_\d\d\d\d', pdf)[0].title()
     if school == 'Lasalle_Ii':
         school = 'LaSalle II'
     source = 'http://www.cps.edu/SiteCollectionDocuments/LeadTesting/' + pdf
@@ -30,72 +30,20 @@ def pattern_1(row):
     return validate(group, sample, location, date, test_result)
 
 def pattern_2(row):
-    group, sample, location, date, test_result, *rest = row
-    test_result = re.sub(r' (ND|BA)$', '', test_result)
+    group, sample, location, _, date, *mid, test_result, _ = row
     return validate(group, sample, location, date, test_result)    
 
 def pattern_3(row):
-    group, sample_location, date, test_result, *rest = row
-    sample, location = re.findall(r'^([\w\d]+-[\w\d/-]+)\s(.*)', sample_location)[0]
-    return validate(group, sample, location, date, test_result)    
-
-def pattern_4(row):
-    group, sample_location, _, date, *mid, test_result, _ = row
-    sample, location = re.findall(r'^([\w\d]+-[\w\d/-]+)\s(.*)', sample_location)[0]
-    return validate(group, sample, location, date, test_result)    
-
-def pattern_5(row):
-    group, _, sample, location, date, test_result, *rest = row
-    return validate(group, sample, location, date, test_result)
-
-def pattern_6(row):
-    group, sample_location_date, test_result, *rest = row
-    sample, location, date = re.findall(r'^([\w\d]+-[\w\d/-]+)\s(.*)\s(\d{1,2}/\d{1,2}/\d{1,4}.*)', sample_location_date)[0]
-    return validate(group, sample, location, date, test_result)
-
-def pattern_7(row):
     group, sample, location, _, date, test_result, *rest = row
     return validate(group, sample, location, date, test_result)
 
-def pattern_8(row):
-    group, sample_location, date_test_result, *rest = row
-    sample, location = re.findall(r'^([\w\d]+-[\w\d/-]+)\s(.*)', sample_location)[0]
-    date, test_result = re.findall(r'^(.*?(?:AM|PM))\s(.*)$', date_test_result)[0]
-    return validate(group, sample, location, date, test_result)
-
-def pattern_9(row):
+def pattern_4(row):
     group, _, _, sample, location, _, date, *mid, test_result, _ = row
     return validate(group, sample, location, date, test_result)
 
-def pattern_10(row):
+def pattern_5(row):
     group, sample, location_date, test_result, *rest = row
-    location, date = re.findall(r'^(.*)\s(\d{1,2}/\d{1,2}/\d{1,4}.*)', location_date)[0]
-    return validate(group, sample, location, date, test_result)
-
-def pattern_11(row):
-    group, sample, location, date_test_result, *rest = row
-    date, test_result = re.findall(r'^(.*?(?:AM|PM))\s(.*)$', date_test_result)[0]
-    test_result = re.sub(r' (ND|BA|AA)$', '', test_result)
-    return validate(group, sample, location, date, test_result)
-
-def pattern_12(row):
-    group, sample_date, test_result, *rest = row
-    sample, date = re.findall(r'^([\w\d]+-[\w\d/-]+)\s(.*)$', sample_date)[0]
-    location = None
-    return validate(group, sample, location, date, test_result)
-
-def pattern_13(row):
-    group, sample, location_date_test_result, *rest = row
-    location, date, test_result = re.findall(r'^(.*)\s(\d{1,2}/\d{1,2}/\d{1,4}.*(?:AM|PM))\s(.*)$', location_date_test_result)[0]
-    return validate(group, sample, location, date, test_result)
-
-def pattern_14(row):
-    group, sample, location, date_test_result, *rest = row
-    date, test_result = re.findall(r'^(.*?\s\d{1,2}/\d{1,2}/\d{1,4})\s(.*)', date_test_result)[0]
-    return validate(group, sample, location, date, test_result)
-
-def pattern_15(row):
-    group, _, _, sample, location, date, test_result, *rest = row
+    location, date = re.findall(r'^(.*)((?:1|2|3|4|5|6|7|8|9|10|11|12)/\d{1,2}/\d{1,4}.*)', location_date)[0]
     return validate(group, sample, location, date, test_result)
 
 def to_time(date_string, date_formats):
@@ -125,12 +73,14 @@ def clean_sample_id(sample_id) :
     sample_id = sample_id.replace('B -N', 'B-N')
     sample_id = sample_id.replace('- F', '-F')
     sample_id = sample_id.replace('- S', '-S')
+    sample_id = sample_id.replace('- N-', '-N-')
+    sample_id = sample_id.replace(' S-', '-S-')
     return sample_id
 
 HEADER_FIELDS = {'Sample Collection', 'Time & Date', 'Test Results (ppb)',
                  '(Hours)', 'Length of time water', 'chool Short Name',
                  'Sample ID #', 'Sample Collection Time & Sample ID # Sample Location',
-                 'School Name', 'Date', '& Date',
+                 'School Name', 'Date', '& Date','Test Results',
                  'Name of CCA or GSG Sample ID # Sample Location',
                  'Sample ID # Sample Location Sample Collection Time & Date',
                  'remained in pipes Sample ID # Sample Collection Time & Test ResultsDate', 'ppb LevelTime & DateTest Results (ppb)'}
@@ -142,6 +92,7 @@ DATE_FORMATS =  ('%m/%d/%y %I:%M %p',
                  '%m/%d/%y %I:%M',
                  '%m/%d/%Y %I%p',
                  '%m/%d %I:%M',
+                 '%m/%d/%y',
                  '%I:%M %p %m/%d/%y',
                  '%I:%M%p %m/%d/%y')
 
@@ -162,44 +113,11 @@ with open('err.csv', 'w') as err_file:
                                             pattern_2,
                                             pattern_3,
                                             pattern_4,
-                                            pattern_5,
-                                            pattern_6,
-                                            pattern_7,
-                                            pattern_8,
-                                            pattern_9,
-                                            pattern_10,
-                                            pattern_11,
-                                            pattern_12,
-                                            pattern_13,
-                                            pattern_14,
-                                            pattern_15)))
+                                            pattern_5)))
         except:
-            if row[0] in {'Individualschool_Beidler_609797.pdf.csv',
-                          'Individualschool_Blair_610087.pdf.csv',
-                          'Individualschool_Budlong_609817.pdf.csv',
-                          'Individualschool_Burroughs_609829.pdf.csv',
-                          'Individualschool_Camras_610539.pdf.csv',
-                          'Individualschool_Dawes_609879.pdf.csv',
-                          'Individualschool_Fulton_609929.pdf.csv',
-                          'Individualschool_Goethe_609942.pdf.csv',
-                          'Individualschool_Haugan_609972.pdf.csv',
-                          'Individualschool_Nightingale_610096.pdf.csv',
-                          'Individualschool_Peirce_610122.pdf.csv',
-                          'Individualschool_Ravenswood_610141.pdf.csv',
-                          'Individualschool_Ray_610142.pdf.csv',
-                          'Individualschool_Reilly_610144.pdf.csv',
-                          'Individualschool_Rogers_610147.pdf.csv',
-                          'Individualschool_Saucedo_610017.pdf.csv',
-                          'IndividualSchool_Stevenson_610185.pdf.csv',
-                          'Individualschool_Tanner_610279.pdf.csv',
-                          'Individualschool_Vick_609871.pdf.csv',
-                          'Individualschool_VonLinne_610039.pdf.csv',
-                          'Individualschool_Washington_610124.pdf.csv',
-                          'Individualschool_Wentworth_610223.pdf.csv',
-                          'Individualschool_Whitney_610227.pdf.csv',
-                          'IndividualSchool_Davis_609876.pdf.csv',
-                          'IndividualSchool_Chavez_610148.pdf.csv',
-                          'Individualschool_whittier_610228.pdf.csv'}:
+            if (len(row) < 5
+                or re.match(r'^[\w\d/-]+$', row[1]) is None
+                or row[0] in {'Individualschool_Ravenswood_610141.pdf.csv'}):
                 school, source = school_source(row[0])
                 row[0] = school
                 row.append(source)
@@ -207,3 +125,4 @@ with open('err.csv', 'w') as err_file:
             else:
                 print(row, file=sys.stderr)
                 raise
+
