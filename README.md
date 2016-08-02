@@ -18,7 +18,7 @@ To install tabula-java, run `make tabula-java`
 run `make clean.csv` This will make a spreadsheet `clean.csv` with the
 school name, sample id, sample time, sample level, and url of the
 source file. It will also make a spreadsheet called `err.csv` with the
-rows that it as not able to extract cleanly. You'll need to deal with
+rows that it was not able to extract cleanly. You'll need to deal with
 those by hand.
 
 In the making of these two spreadsheets, we will download all the pdf
