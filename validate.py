@@ -100,6 +100,7 @@ def pattern_15(row):
 
 def to_time(date_string, date_formats):
     date_string = date_string.replace(' -\xad‐ ', ' ')
+    date_string = date_string.replace(' - ', ' ')
     for date_format in date_formats:
         try:
             return datetime.datetime.strptime(date_string, date_format)
@@ -129,7 +130,7 @@ def clean_sample_id(sample_id) :
 HEADER_FIELDS = {'Sample Collection', 'Time & Date', 'Test Results (ppb)',
                  '(Hours)', 'Length of time water', 'chool Short Name',
                  'Sample ID #', 'Sample Collection Time & Sample ID # Sample Location',
-                 'School Name',
+                 'School Name', 'Date', '& Date',
                  'Name of CCA or GSG Sample ID # Sample Location',
                  'Sample ID # Sample Location Sample Collection Time & Date',
                  'remained in pipes Sample ID # Sample Collection Time & Test ResultsDate', 'ppb LevelTime & DateTest Results (ppb)'}
@@ -189,14 +190,20 @@ with open('err.csv', 'w') as err_file:
                           'Individualschool_Reilly_610144.pdf.csv',
                           'Individualschool_Rogers_610147.pdf.csv',
                           'Individualschool_Saucedo_610017.pdf.csv',
+                          'IndividualSchool_Stevenson_610185.pdf.csv',
                           'Individualschool_Tanner_610279.pdf.csv',
                           'Individualschool_Vick_609871.pdf.csv',
                           'Individualschool_VonLinne_610039.pdf.csv',
                           'Individualschool_Washington_610124.pdf.csv',
                           'Individualschool_Wentworth_610223.pdf.csv',
                           'Individualschool_Whitney_610227.pdf.csv',
+                          'IndividualSchool_Davis_609876.pdf.csv',
+                          'IndividualSchool_Chavez_610148.pdf.csv',
                           'Individualschool_whittier_610228.pdf.csv'}:
                 school, source = school_source(row[0])
                 row[0] = school
                 row.append(source)
                 err_writer.writerow(row)
+            else:
+                print(row, file=sys.stderr)
+                raise

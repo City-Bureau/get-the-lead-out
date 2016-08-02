@@ -1,7 +1,7 @@
 tabula = java -jar ./tabula-java/target/tabula-0.9.0-jar-with-dependencies.jar
 
 clean.csv : out.csv
-	out.csv | python3 validate.py > clean.csv
+	cat $< | python3 validate.py > $@
 
 
 .PHONY : pdfs
@@ -15,7 +15,7 @@ csvs : pdfs
 	done
 
 out.csv : csvs
-	csvstack --filenames Indiv*.csv | sed 's/,,\+/,/g' > out.csv
+	csvstack --filenames Indiv*.csv | sed 's/,,\+/,/g' > $@
 
 tabula-java :
 	git clone https://github.com/tabulapdf/tabula-java.git
