@@ -10,8 +10,7 @@ with open('CPSLeadTestingMap.csv') as f:
         response = requests.get(url)
         with open(filename, 'wb') as outfile:
             outfile.write(response.content)
-
-        break
+        print(filename)
         
         
 
