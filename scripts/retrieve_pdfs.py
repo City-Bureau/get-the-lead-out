@@ -14,6 +14,3 @@ with open('raw/CPSLeadTestingMap.csv') as f:
             print('%s downloaded' % filename)
         else:
             print('%s not found' % filename)
-        
-        
-

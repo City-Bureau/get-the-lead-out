@@ -12,9 +12,9 @@ pdfs :
 	python3 scripts/retrieve_pdfs.py
 
 .PHONY : csvs
-csvs : pdfs
+csvs : #pdfs
 	for pdf in *.pdf; \
-        do $(tabula) --pages all -g -r $$pdf > $$pdf.csv; \
+        	do $(tabula) --pages all -g -r $$pdf > $$pdf.csv; \
 	done
 
 out.csv : csvs
