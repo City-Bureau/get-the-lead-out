@@ -37,17 +37,17 @@ def process(x, school_name, file_name, droprows=1):
     return '\n'.join(x.split('\n')[:-droprows])
 
 files = {
-    'Sabin': 'tabula/tabula-individualschool_sabin_610342.csv', 
-    'Powell': 'tabula/tabula-IndividualSchool_Powell_610281.csv', 
-    'Falconer': 'tabula/tabula-Individualschool_Falconer_609910.csv', 
-    'Skinnernorth': 'tabula/tabula-individualschool_skinnernorth_610534.csv', 
-    'Tanner': 'tabula/tabula-Individualschool_Tanner_610279.csv', 
-    'Younghs': 'tabula/tabula-IndividualSchool_YoungHS_ 609755.csv', 
-    'Juarezhs': 'tabula/tabula-IndividualSchool_JuarezHS_ 609764.csv', 
-    'Garvy': 'tabula/tabula-individualschool_garvy_609937.csv', 
-    'Cassell': 'tabula/tabula-individualschool_cassell_609849.csv', 
-    'Collinshs': 'tabula/tabula-IndividualSchool_CollinsHS_610499.csv', 
-    'Lasalle': 'tabula/tabula-individualschool_lasalle_610033.csv'
+    'Sabin': 'tabula-gui/tabula-individualschool_sabin_610342.csv', 
+    'Powell': 'tabula-gui/tabula-IndividualSchool_Powell_610281.csv', 
+    'Falconer': 'tabula-gui/tabula-Individualschool_Falconer_609910.csv', 
+    'Skinnernorth': 'tabula-gui/tabula-individualschool_skinnernorth_610534.csv', 
+    'Tanner': 'tabula-gui/tabula-Individualschool_Tanner_610279.csv', 
+    'Younghs': 'tabula-gui/tabula-IndividualSchool_YoungHS_ 609755.csv', 
+    'Juarezhs': 'tabula-gui/tabula-IndividualSchool_JuarezHS_ 609764.csv', 
+    'Garvy': 'tabula-gui/tabula-individualschool_garvy_609937.csv', 
+    'Cassell': 'tabula-gui/tabula-individualschool_cassell_609849.csv', 
+    'Collinshs': 'tabula-gui/tabula-IndividualSchool_CollinsHS_610499.csv', 
+    'Lasalle': 'tabula-gui/tabula-individualschool_lasalle_610033.csv'
 }
 
 # special cases

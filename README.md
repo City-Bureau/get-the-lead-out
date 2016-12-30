@@ -5,7 +5,7 @@ Scripts for extracting measurements from Chicago Public School lead reports.
 ## Assumes
 
 * posix environment (linux, mac, that sort of thing)
-* already installed: python3, maven, git, csvkit, wget
+* already installed: python3, maven, git, csvkit
 
 ## Install
 

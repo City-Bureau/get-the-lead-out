@@ -1,0 +1,13 @@
+## this directory contains:
+lead test results in csv format extracted with user input via the [tabula gui](http://tabula.technology/) from the following source pdfs:
+* tabula-IndividualSchool_CollinsHS_610499.csv - [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-IndividualSchool_CollinsHS_610499.csv) / [archive](../pdf-archive/tabula-IndividualSchool_CollinsHS_610499.csv) 
+* tabula-Individualschool_Falconer_609910.csv - [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-Individualschool_Falconer_609910.csv) / [archive](../pdf-archive/tabula-Individualschool_Falconer_609910.csv)	
+* tabula-individualschool_lasalle_610033.csv - [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-individualschool_lasalle_610033.csv) / [archive](../pdf-archive/tabula-individualschool_lasalle_610033.csv)
+* tabula-IndividualSchool_JuarezHS_ 609764.csv - [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-IndividualSchool_JuarezHS_ 609764.csv) / [archive](../pdf-archive/tabula-IndividualSchool_JuarezHS_ 609764.csv)	
+* tabula-Individualschool_Tanner_610279.csv	- [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-Individualschool_Tanner_610279.csv) / [archive](../pdf-archive/tabula-Individualschool_Tanner_610279.csv)
+* tabula-individualschool_sabin_610342.csv - [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-individualschool_sabin_610342.csv) / [archive](../pdf-archive/tabula-individualschool_sabin_610342.csv)
+* tabula-IndividualSchool_Powell_610281.csv - [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-IndividualSchool_Powell_610281.csv ) / [archive](../pdf-archive/tabula-IndividualSchool_Powell_610281.csv )	
+* tabula-individualschool_cassell_609849.csv - [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-individualschool_cassell_609849.csv) / [archive](../pdf-archive/tabula-individualschool_cassell_609849.csv)	
+* tabula-individualschool_skinnernorth_610534.csv - [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-individualschool_skinnernorth_610534.csv) / [archive](../pdf-archive/tabula-individualschool_skinnernorth_610534.csv)
+* tabula-IndividualSchool_YoungHS_ 609755.csv - [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-IndividualSchool_YoungHS_ 609755.csv) / [archive](../pdf-archive/tabula-IndividualSchool_YoungHS_ 609755.csv)	
+* tabula-individualschool_garvy_609937.csv - [original source](http://cps.edu/SiteCollectionDocuments/LeadTesting/tabula-individualschool_garvy_609937.csv) / [archive](../pdf-archive/tabula-individualschool_garvy_609937.csv)
