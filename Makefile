@@ -14,11 +14,11 @@ pdfs :
 .PHONY : csvs
 csvs : #pdfs
 	for pdf in pdf-archive/*.pdf; \
-        	do $(tabula) --pages 3-`pdfinfo $$pdf | grep Pages | sed 's/[^[0-9]*//'` -g -r $$pdf > $$pdf.csv; \
+        	do $(tabula) --pages 3-`pdfinfo $$pdf | grep Pages | perl -p -e 's/[^[0-9]*//'` -g -r $$pdf > $$pdf.csv; \
 	done
 
 out.csv : csvs
-	csvstack --filenames Indiv*.csv | perl -p -e 's/,,\+/,/g' > $@
+	csvstack --filenames pdf-archive/*.csv | perl -p -e 's/,,+/,/g' > $@
 
 clean.csv : out.csv
 	cat $< | python3 scripts/validate.py > $@
