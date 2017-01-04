@@ -45,6 +45,14 @@ source file for every row that tabula successfully processed. Any row that produ
 
 In making these two spreadsheets, we download all the PDF reports from the Chicago Public Schools website and extract a bunch of messy spreadsheets from those PDFs. There are a lot of reports (over 500), so set aside a nice chunk of time - 30 minutes to an hour is a safe bet - for the script to run. 
 
+If you'd like to run the Makefile on our archive of reports from Summer 2016, run the make command with the optional variable `source` like so:
+
+```
+make clean.csv source=pdf-archive
+```
+
+This command will instruct Make to ignore the scraping step, and use the files in the `pdf-archive/` repo to complete the cleaning process.
+
 ### 2. Clean up errors
 
 Since errors are output on the level of rows, and not files, `err.csv` may contain anywhere from a few rows to entire reports for schools where the tabula couldn't read the PDF. Once the spreadsheets have been produced, take some time to carefully look over `err.csv` and see what was missed. 
