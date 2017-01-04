@@ -13,10 +13,14 @@ tabula-java :
 
 .PHONY : pdfs
 pdfs :
+ifeq ($(source),pdf-archive)
+	:
+else
 	python3 scripts/retrieve_pdfs.py
+endif
 
 .PHONY : csvs
-csvs : #pdfs
+csvs : pdfs
 ifeq ($(source),pdf-archive)
 	for pdf in pdf-archive/*.pdf; \
 		do $(tabula-process); \
@@ -27,7 +31,7 @@ else
 	done
 endif
 
-out.csv : #csvs
+out.csv : csvs
 ifeq ($(source),pdf-archive)
 	csvstack --filenames pdf-archive/*.csv | perl -p -e 's/,,+/,/g' > $@
 else
