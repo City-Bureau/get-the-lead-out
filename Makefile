@@ -1,5 +1,9 @@
 tabula = java -jar ./tabula-java/target/tabula-0.9.1-jar-with-dependencies.jar
 
+tabula-process = $(tabula) --pages 3-`pdfinfo $$pdf | grep Pages | perl -p -e 's/[^[0-9]*//'` -g -r $$pdf > $$pdf.csv
+
+source = "${source:-scraped}"
+
 .PHONY : all
 all : clean.csv
 
@@ -13,12 +17,22 @@ pdfs :
 
 .PHONY : csvs
 csvs : #pdfs
+ifeq ($(source),pdf-archive)
 	for pdf in pdf-archive/*.pdf; \
-        	do $(tabula) --pages 3-`pdfinfo $$pdf | grep Pages | perl -p -e 's/[^[0-9]*//'` -g -r $$pdf > $$pdf.csv; \
+		do $(tabula-process); \
 	done
+else
+	for pdf in *.pdf; \
+		do $(tabula-process); \
+	done
+endif
 
-out.csv : csvs
+out.csv : #csvs
+ifeq ($(source),pdf-archive)
 	csvstack --filenames pdf-archive/*.csv | perl -p -e 's/,,+/,/g' > $@
+else
+	csvstack --filenames *.csv | perl -p -e 's/,,+/,/g' > $@
+endif
 
 clean.csv : out.csv
 	cat $< | python3 scripts/validate.py > $@
