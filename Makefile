@@ -12,9 +12,9 @@ pdfs :
 	python3 scripts/retrieve_pdfs.py
 
 .PHONY : csvs
-csvs : pdfs
-	for pdf in *.pdf; \
-        	do $(tabula) --pages all -g -r $$pdf > $$pdf.csv; \
+csvs : #pdfs
+	for pdf in pdf-archive/*.pdf; \
+        	do $(tabula) --pages 3-`pdfinfo $$pdf | grep Pages | sed 's/[^[0-9]*//'` -g -r $$pdf > $$pdf.csv; \
 	done
 
 out.csv : csvs
