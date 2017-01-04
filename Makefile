@@ -5,7 +5,7 @@ all : clean.csv
 
 tabula-java :
 	git clone https://github.com/tabulapdf/tabula-java.git
-	cd tabula-java && mvn clean compile assembly:single
+	cd tabula-java && git checkout -b 931b9ee8e449bb4bf6d534df4ea6ac0453a59d81 && mvn clean compile assembly:single
 
 .PHONY : pdfs
 pdfs :
