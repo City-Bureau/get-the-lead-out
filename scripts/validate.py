@@ -3,6 +3,9 @@ import csv
 import re
 import datetime
 
+from config import (SCHOOLS_WITH_RESULTS_OVER_400, 
+                    SCHOOLS_WITH_KNOWN_SCRAPE_ERRORS)
+
 def clean(row, patterns, force=False):
     if not force:
         for pattern in patterns:
@@ -23,7 +26,7 @@ def clean(row, patterns, force=False):
 
 def school_source(group):
     pdf = group.replace('.csv', '')
-    school = re.findall(r'Individual.chools*_(.*?)_\d\d\d\d', pdf)[0].title()
+    school = re.findall(r'.ndividual.chools*_(.*?)_\d\d\d\d', pdf)[0].title()
     if school == 'Lasalle_Ii':
         school = 'LaSalle II'
     source = 'http://www.cps.edu/SiteCollectionDocuments/LeadTesting/' + pdf
@@ -32,11 +35,11 @@ def school_source(group):
 def validate(group, sample, location, date, test_result, force=False):
     assert re.match(r'^[\w\d/-]+$', sample) is not None
     school, source = school_source(group)
+
     if not force:
         return (school, sample, location, to_time(date, DATE_FORMATS), to_result(test_result), source)
     else:
         return (school, sample, location, to_time(date, DATE_FORMATS), to_result(test_result, force=True), source)      
-
 
 def pattern_1(row, force=False):
     group, sample, location, date, test_result, *rest = row
@@ -109,6 +112,14 @@ def pattern_10(row, force=False):
     else:
         return validate(group, sample, location, date, test_result, force=True)
 
+def pattern_11(row, force=False):
+    group, sample, location, collector_name, fixture_manufacturer, test_result, *rest = row
+    date = 'kOqgIOP4XiZZu5CMqq0o'
+    if not force:
+        return validate(group, sample, location, date, test_result)
+    else:
+        return validate(group, sample, location, date, test_result, force=True)
+
 def to_time(date_string, date_formats):
     date_string = date_string.replace(' -\xad‐ ', ' ')
     date_string = date_string.replace(' - ', ' ')
@@ -167,10 +178,18 @@ DATE_FORMATS =  ('%m/%d/%y %I:%M %p',
                  '%m/%d %I:%M',
                  '%m/%d/%y',
                  '%I:%M%p',
-                 '%I:%M%P',
+                 '%I:%M%p',
                  '%I:%M %p %m/%d/%y',
                  '%I:%M%p %m/%d/%y',
-                 '%I:%M%p %m/%d//%y')
+                 '%I:%M%p %m/%d//%y',
+                 'kOqgIOP4XiZZu5CMqq0o')
+
+PATTERNS = (pattern_1, pattern_2,
+            pattern_3, pattern_4,
+            pattern_5, pattern_6,
+            pattern_7, pattern_8,
+            pattern_9, pattern_10,
+            pattern_11)
 
 reader = csv.reader(sys.stdin)
 next(reader)
@@ -186,60 +205,26 @@ with open('err.csv', 'w') as err_file:
             continue
         row[1] = clean_sample_id(row[1])
         try:
-            out_writer.writerow(clean(row, (pattern_1,
-                                            pattern_2,
-                                            pattern_3,
-                                            pattern_4,
-                                            pattern_5,
-                                            pattern_6,
-                                            pattern_7,
-                                            pattern_8,
-                                            pattern_9,
-                                            pattern_10)))
+            out_writer.writerow(clean(row, PATTERNS))
         except:
-            if (len(row) < 5
-                or re.match(r'^[\w\d/-]+$', row[1]) is None
-                or row[0] in [
-                    'IndividualSchool_Libby_610037.pdf.csv',
-                    'Individualschool_Ravenswood_610141.pdf.csv',
-                    ]):
-                school, source = school_source(row[0])
-                row[0] = school
-                row.append(source)
-                err_writer.writerow(row)
-            elif row[0] in [
-                # Schools with confirmed lead counts higher than 500
-                'IndividualSchool_Wells_610110.pdf.csv',
-                'Individualschool_Beasley_610246.pdf.csv',
-                'IndividualSchool_Hamline_609964.pdf.csv',
-                'IndividualSchool_Kershaw_610019.pdf.csv',
-                'Individualschool_Blair_610087.pdf.csv',
-                'Individualschool_Bouchet_609815.pdf.csv',
-                'Individualschool_Mireles_610171.pdf.csv',
-                'Individualschool_Onahan_610104.pdf.csv',
-                'Individualschool_Sherman_610172.pdf.csv',
-                'IndividualSchool_Pullman_610139.pdf.csv',
-                'IndividualSchool_Orr_610389.pdf.csv'
-            ]:
+            if row[0] in SCHOOLS_WITH_RESULTS_OVER_400:
                 try:
-                    out_writer.writerow(clean(row, (pattern_1,
-                                                    pattern_2,
-                                                    pattern_3,
-                                                    pattern_4,
-                                                    pattern_5,
-                                                    pattern_6,
-                                                    pattern_7,
-                                                    pattern_8,
-                                                    pattern_9,
-                                                    pattern_10),
-                                              force=True))
+                    out_writer.writerow(clean(row, PATTERNS, force=True))
                 except:
                     if (len(row) < 5
-                        or re.match(r'^[\w\d/-]+$', row[1]) is None):
+                        or re.match(r'^[\w\d/-]+$', row[1]) is None
+                        or row[0] in SCHOOLS_WITH_KNOWN_SCRAPE_ERRORS):
                         school, source = school_source(row[0])
                         row[0] = school
                         row.append(source)
                         err_writer.writerow(row)
+            elif (len(row) < 5
+                or re.match(r'^[\w\d/-]+$', row[1]) is None
+                or row[0] in SCHOOLS_WITH_KNOWN_SCRAPE_ERRORS):
+                school, source = school_source(row[0])
+                row[0] = school
+                row.append(source)
+                err_writer.writerow(row)
             else:
                 print(row, file=sys.stderr)
                 raise
