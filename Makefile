@@ -1,6 +1,6 @@
 tabula = java -jar ./tabula-java/target/tabula-0.9.1-jar-with-dependencies.jar
 tabula-process-skip-letter = $(tabula) --pages 3-$$pages -g -r "$$pdf" > $$pdf.csv
-tabula-process = $(tabula) --pages 1-$$pages -g -r $$pdf > $$pdf.csv
+tabula-process = $(tabula) --pages 1-$$pages -g -r "$$pdf" > $$pdf.csv
 source = "${source:-scraped}"
 
 .PHONY : all
