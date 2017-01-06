@@ -1,2 +1,2 @@
 ## this directory contains:
-the data table underlying the [chicago public schools lead test results map](http://cps.edu/ScriptLibrary/MAP-LeadTesting/index.html) in csv format.
+the [data table](https://fusiontables.google.com/DataSource?docid=1BbJaE_Ilj3Mp-E8XOP6qCIkZ4X-OvpID3yfD6Uan) underlying the [chicago public schools lead test results map](http://cps.edu/ScriptLibrary/MAP-LeadTesting/index.html) in csv format.
