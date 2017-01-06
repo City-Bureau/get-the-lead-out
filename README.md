@@ -40,32 +40,18 @@ After Make finishes, tabula-java will be installed in the `tabula-java` director
 
 ### 1. Make the spreadsheets
 
-To produce the final spreadsheet, run the command `make clean.csv`. This will make two spreadsheets: `clean.csv` and `err.csv`. The spreadsheet `clean.csv` contains the school name, sample id, sample time, sample level, and URL of the
+To produce the final spreadsheet, run the command `make cps.csv`. This will make two spreadsheets: `cps.csv` and `err.csv`. The spreadsheet `cps.csv` contains the school name, sample id, sample time, sample level, and URL of the
 source file for every row that tabula successfully processed. Any row that produced a scraping error will be output to `err.csv`.
 
 In making these two spreadsheets, we download all the PDF reports from the Chicago Public Schools website and extract a bunch of messy spreadsheets from those PDFs. There are a lot of reports (over 500), so set aside a nice chunk of time - 30 minutes to an hour is a safe bet - for the script to run. 
 
-If you'd like to run the Makefile on our archive of reports from Summer 2016, run the make command with the optional variable `source` like so:
-
-```
-make clean.csv source=pdf-archive
-```
-
-This command will instruct Make to ignore the scraping step, and use the files in the `pdf-archive/` directory to complete the cleaning process.
+We already have an archive of reports from Summer 2016, if you don't want to use those, remove all the files in pdf-archive before running `make cps.csv`
 
 ### 2. Confirm that you caught every school
 
 To confirm that Tabula extracted information for every school, ensure there is a non-empty spreadsheet for every PDF you downloaded. 
 
 The following shell command will run this check for you, outputting an affirmative message if your scrape is complete or pointing you to the empty spreadsheet files for further investigation if not. To use, run the appropriate version from your project directory.
-
-If you downloaded the PDFs yourself:
-
-```
-NUM_PDFS=`find *.pdf -type f | wc -l`; NUM_CSVS=`find *.csv -type f ! -empty | wc -l`; if [ $NUM_PDFS -eq $NUM_CSVS ]; then echo Got them all; else echo Missing information from $[$NUM_PDFS-$NUM_CSVS] schools:; find *.csv -type f -empty; fi;
-```
-
-If you used `pdf-archive/`:
 
 ```
 NUM_PDFS=`find pdf-archive/*.pdf -type f | wc -l`; NUM_CSVS=`find pdf-archive/*.csv -type f ! -empty | wc -l`; if [ $NUM_PDFS -eq $NUM_CSVS ]; then echo Got them all; else echo Missing information from $[$NUM_PDFS-$NUM_CSVS] schools:; find pdf-archive/*.csv -type f -empty; fi;
