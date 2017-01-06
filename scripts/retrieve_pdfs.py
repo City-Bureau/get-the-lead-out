@@ -9,7 +9,7 @@ with open('raw/CPSLeadTestingMap.csv') as f:
         url = 'http://cps.edu/SiteCollectionDocuments/LeadTesting/' + filename
         response = requests.get(url)
         if response.ok:
-            with open(filename, 'wb') as outfile:
+            with open('pdf-archive/' + filename, 'wb') as outfile:
                outfile.write(response.content)
             print('%s downloaded' % filename)
         else:
