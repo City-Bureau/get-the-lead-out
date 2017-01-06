@@ -1,45 +1,33 @@
+SHELL=bash
+
 tabula = java -jar ./tabula-java/target/tabula-0.9.1-jar-with-dependencies.jar
-tabula-process-skip-letter = $(tabula) --pages 3-$$pages -g -r "$$pdf" > $$pdf.csv
-tabula-process = $(tabula) --pages 1-$$pages -g -r "$$pdf" > $$pdf.csv
-source = "${source:-scraped}"
+pdf-pages = `pdfinfo "$$pdf" | grep Pages | perl -p -e 's/[^[0-9]*//'`
 
 .PHONY : all
-all : clean.csv
+all : cps.csv
 
 tabula-java :
 	git clone https://github.com/tabulapdf/tabula-java.git
-	cd tabula-java && git checkout -b 931b9ee8e449bb4bf6d534df4ea6ac0453a59d81 && mvn clean compile assembly:single
+	cd tabula-java && \
+        git checkout a1775ecb744abf06f6d6d7d024b561d13bb01f7d && \
+        mvn clean compile assembly:single
 
 .PHONY : pdfs
-pdfs :
-ifeq ($(source),pdf-archive)
-	:
-else
+pdf-archive : 
 	python3 scripts/retrieve_pdfs.py
-endif
 
 .PHONY : csvs
-csvs : pdfs
-ifeq ($(source),pdf-archive)
-	find pdf-archive/*.pdf -print0 | \
-	while read -d $$'\0' pdf; do \
-		pages=`pdfinfo "$$pdf" | grep Pages | perl -p -e 's/[^[0-9]*//'`; \
-		if [ $$pages -gt 2 ]; then $(tabula-process-skip-letter); else $(tabula-process); fi; \
-	done
-else
-	find *.pdf -print0 | \
-	while read -d $$'\0' pdf; do \
-		pages=`pdfinfo "$$pdf" | grep Pages | perl -p -e 's/[^[0-9]*//'`; \
-		if [ $$pages -gt 2 ]; then $(tabula-process-skip-letter); else $(tabula-process); fi; \
-	done
-endif
+csvs :
+	for pdf in pdf-archive/*.pdf; \
+            do if [[ $(pdf-pages) > 2 ]]; then \
+                   $(tabula) --pages 3- -g -r "$$pdf" > $$pdf.csv; \
+                else \
+                   $(tabula) --pages 1- -g -r "$$pdf" > $$pdf.csv; \
+               fi \
+        done
 
-out.csv : #csvs
-ifeq ($(source),pdf-archive)
+stacked.csv : #csvs
 	csvstack --filenames pdf-archive/*.csv | perl -p -e 's/,,+/,/g' > $@
-else
-	csvstack --filenames *.csv | perl -p -e 's/,,+/,/g' > $@
-endif
 
-clean.csv : out.csv
+cps.csv : stacked.csv
 	cat $< | python scripts/validate.py > $@
