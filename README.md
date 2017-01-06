@@ -51,15 +51,31 @@ If you'd like to run the Makefile on our archive of reports from Summer 2016, ru
 make clean.csv source=pdf-archive
 ```
 
-This command will instruct Make to ignore the scraping step, and use the files in the `pdf-archive/` repo to complete the cleaning process.
+This command will instruct Make to ignore the scraping step, and use the files in the `pdf-archive/` directory to complete the cleaning process.
 
-### 2. Clean up errors
+### 2. Confirm that you caught every school
+
+To confirm that Tabula extracted information for every school, ensure there is a non-empty spreadsheet for every PDF you downloaded. 
+
+The following shell command will run this check for you, outputting an affirmative message if your scrape is complete or pointing you to the empty spreadsheet files for further investigation if not. To use, run the appropriate version from your project directory.
+
+If you downloaded the PDFs yourself:
+
+```
+NUM_PDFS=`find *.pdf -type f | wc -l`; NUM_CSVS=`find *.csv -type f ! -empty | wc -l`; if [ $NUM_PDFS -eq $NUM_CSVS ]; then echo Got them all; else echo Missing information from $[$NUM_PDFS-$NUM_CSVS] schools:; find *.csv -type f -empty; fi;
+```
+
+If you used `pdf-archive/`:
+
+```
+NUM_PDFS=`find pdf-archive/*.pdf -type f | wc -l`; NUM_CSVS=`find pdf-archive/*.csv -type f ! -empty | wc -l`; if [ $NUM_PDFS -eq $NUM_CSVS ]; then echo Got them all; else echo Missing information from $[$NUM_PDFS-$NUM_CSVS] schools:; find pdf-archive/*.csv -type f -empty; fi;
+```
+
+### 3. Clean up errors
 
 Since errors are output on the level of rows, and not files, `err.csv` may contain anywhere from a few rows to entire reports for schools where the tabula couldn't read the PDF. Once the spreadsheets have been produced, take some time to carefully look over `err.csv` and see what was missed. 
 
 In cases where tabula messed up individual rows, you'll have to check the original PDFs and add these rows to `clean.csv` by hand. If tabula missed entire pages or reports, however, you may want to go back and scrape the PDFs by hand using [tabula's GUI](http://tabula.technology/). Errors on the level of pages are often caused by strange PDF layouts, and it can be easier to deal with them in the GUI.
-
-### 3. Confirm that you caught every school
 
 ## Using this code in the future
 
@@ -67,16 +83,16 @@ This code is optimized for the lead reports produced by CPS during Summer 2016. 
 
 ### New patterns
 
-Since there is no standard schema for CPS's lead reports, `validate.py` matches table columns against a few different common patterns to try to identify the correct columns for each report. These patterns are defined in lines 41-110, under the method name `pattern_<number>`.
+Since there is no standard schema for CPS's lead reports, `validate.py` matches table columns against a few different common patterns to try to identify the correct columns for each report. These patterns are defined under the method names formatted `pattern_<number>`.
 
-If CPS introduces new table schemas in the future and `validate.py` can't understand them, it will print an error to your shell and include the row that it couldn't parse. Confirm that the issue was a schema error by checking that the previous traceback was to the `pattern_10` method (or whatever `pattern` method is the last pattern in your script); once you've identfied the issue, you can define a new `pattern` method to handle the new schema. Append your new method to the list of patterns in the `clean` function call that starts in line 225 and `validate.py` will match future rows against it. 
+If CPS introduces new table schemas in the future and `validate.py` can't understand them, it will print an error to your shell and include the row that it couldn't parse. Confirm that the issue was a schema error by checking that the previous traceback was to the `pattern_11` method (or whatever `pattern` method is the last pattern in your script); once you've identified the issue, you can define a new `pattern` method to handle the new schema. Append your new method to the `PATTERNS` array and `validate.py` will match future rows against it. 
 
 ### Samples testing above 400 ppb
 
 Time columns that were incorrectly labelled as sample results formed a persistent error in the Summer 2016 reports. After processing, military time units (e.g. `0600`) were sometimes functionally indistinguishable from sample units by the machine, resulting in erroneously high sample results for some schools. 
 
-To handle this error, we included a threshold on line 134 in the `to_result` method that would flag any sample column with a reading higher than 400 ppb, stopping the script and printing the row to the shell. After confirming that the column was indeed a sample result and not an incorrectly-labeled time, we added the school name to a list of schools that tested above the threshold in the exception handling on line 212.
+To handle this error, we included a threshold in the `to_result` method that would flag any sample column with a reading higher than 400 ppb, stopping the script and printing the row to the shell. After confirming that the column was indeed a sample result and not an incorrectly-labeled time, we added the school name to a list of schools that tested above the threshold in the exception handling on line 212.
 
-In the future, this list of schools will most likely not be the same. When running the code on a new set of data, empty the list between lines 212-222, and rerun the script to confirm new high-testing schools by hand.
+In the future, this list of schools will most likely not be the same. When running the code on a new set of data, empty the `SCHOOLS_WITH_RESULTS_OVER_400` list in `config.py`, and rerun the script to confirm and add back new high-testing schools by hand.
 
 It may seem tedious to confirm each high-testing school by hand, but it can also help you generate ideas for reporting. 400 ppb is significantly higher than the federal action level for lead tests (15 ppb), so you might want your reporters to look into schools with fixtures that persistently test higher than 400 ppb. 
